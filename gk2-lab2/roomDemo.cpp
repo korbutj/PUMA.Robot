@@ -78,7 +78,7 @@ RoomDemo::RoomDemo(HINSTANCE appInstance)
 	vector<VertexPositionNormal> vertices;
 	vector<unsigned short> indices;
 	m_wall = Mesh::Rectangle(m_device, 4.0f);
-	m_desk = Mesh::Rectangle(m_device, 2.0f);
+	m_desk = Mesh::DoubleRect(m_device, 2.0f);
 	m_weld = Mesh::Rectangle(m_device, 0.1f);
 	m_box = Mesh::ShadedBox(m_device);
 
@@ -104,33 +104,37 @@ RoomDemo::RoomDemo(HINSTANCE appInstance)
 	m_vbParticles = m_device.CreateVertexBuffer<ParticleVertex>(ParticleSystem::MAX_PARTICLES);
 
 	//World matrix of all objects
-	auto temp = XMMatrixTranslation(0.0f, 0.0f, 2.0f);
+	auto translationToTheLeft = XMMatrixTranslation(0.0f, 0.0f, 2.0f);
 	auto scale= XMMatrixScaling(2, 2, 2);
 	auto a = 0.f;
 	for (auto i = 0U; i < 4U; ++i, a += XM_PIDIV2)
-		XMStoreFloat4x4(&m_wallsMtx[i], temp * XMMatrixRotationY(a)*scale);
-	XMStoreFloat4x4(&m_wallsMtx[4], temp * XMMatrixRotationX(XM_PIDIV2) * scale);
-	XMStoreFloat4x4(&m_wallsMtx[5], temp * XMMatrixRotationX(-XM_PIDIV2) * scale);
+		XMStoreFloat4x4(&m_wallsMtx[i], translationToTheLeft * XMMatrixRotationY(a)*scale);
+	XMStoreFloat4x4(&m_wallsMtx[4], translationToTheLeft * XMMatrixRotationX(XM_PIDIV2) * scale);
+	XMStoreFloat4x4(&m_wallsMtx[5], translationToTheLeft * XMMatrixRotationX(-XM_PIDIV2) * scale);
 
-	temp = XMMatrixTranslation(-1.5f, 0.0f, 0.0f);
+	translationToTheLeft = XMMatrixTranslation(-1.5f, 0.0f, 0.0f);
 
 
-	XMStoreFloat4x4(&m_deskMtx, XMMatrixRotationX(XM_PI / 6)* XMMatrixRotationY(-XM_PIDIV2)* temp);
-	XMStoreFloat4x4(&m_weldMtx, XMMatrixRotationX(XM_PI / 6) * XMMatrixRotationY(-XM_PIDIV2) * temp);
+	XMStoreFloat4x4(&m_deskMtx, XMMatrixRotationX(XM_PI / 6) * XMMatrixRotationY(-XM_PIDIV2) * translationToTheLeft);
+	XMStoreFloat4x4(&m_weldMtx, XMMatrixRotationX(XM_PI / 6) * XMMatrixRotationY(-XM_PIDIV2) * translationToTheLeft);
 	XMStoreFloat4x4(&m_boxMtx, XMMatrixTranslation(-1.4f, -1.46f, -0.6f));
 	
 	XMStoreFloat3(&weldPos, XMVector3Transform(XMLoadFloat3(&weldPos), XMLoadFloat4x4(&m_weldMtx)));
 
 	
-	deskNormal = { 1,XM_PI / 6,0 };
-	deskA= { 0,0,1 };
-	deskB = { 1,(XM_PI / 6)+XM_PIDIV2,0 };
-	XMStoreFloat3(&deskNormal, XMVector3Normalize(XMLoadFloat3(&deskNormal)));
-	XMStoreFloat3(&deskA, XMVector3Normalize(XMLoadFloat3(&deskA)));
-	XMStoreFloat3(&deskB, XMVector3Normalize(XMLoadFloat3(&deskB)));
-	
-	
+	deskNormal = { 1, XM_PI / 6, 0 };
+	deskA = { 0, 0, 1 };
+	auto deskNormalVec = XMVector3Normalize(XMLoadFloat3(&deskNormal));
+	XMStoreFloat3(&deskNormal, deskNormalVec);
+	auto deskAVec = XMVector3Normalize(XMLoadFloat3(&deskA));
+	XMStoreFloat3(&deskA, deskAVec);
 
+
+	auto deskBVec = XMVector3Cross(deskNormalVec, deskAVec);
+	XMStoreFloat3(&deskB, XMVector3Normalize(deskBVec));
+	
+	
+	
 	//create matrices for puma
 	for (int i = 0; i < 6; i++)
 	{
@@ -155,6 +159,8 @@ RoomDemo::RoomDemo(HINSTANCE appInstance)
 	auto psCode = m_device.LoadByteCode(L"phongPS.cso");
 	m_phongVS = m_device.CreateVertexShader(vsCode);
 	m_phongPS = m_device.CreatePixelShader(psCode);
+	auto psRectCode = m_device.LoadByteCode(L"phongRectPS.cso");
+	m_phongRectPS = m_device.CreatePixelShader(psRectCode);
 	m_inputlayout = m_device.CreateInputLayout(VertexPositionNormal::Layout, vsCode);
 
 	psCode = m_device.LoadByteCode(L"lightAndShadowPS.cso");
@@ -249,9 +255,10 @@ void mini::gk2::RoomDemo::UpdateWeld(float dt)
 {
 	static auto time = 0.0f;
 	time += dt;
-	weldPos.x = -1.5+ 0.6f * XMScalarCos(time) * deskA.x+ 0.6f * XMScalarSin(time) * deskB.x;
-	weldPos.y = 0.6f * XMScalarCos(time) * deskA.y + 0.6f * XMScalarSin(time) * deskB.y;
-	weldPos.z = 0.6f * XMScalarCos(time) * deskA.z + 0.6f * XMScalarSin(time) * deskB.z;
+	float r = 0.6f;
+	weldPos.x = -1.5f + (r * XMScalarCos(time) * deskA.x) + (r * XMScalarSin(time) * deskB.x);
+	weldPos.y = (r * XMScalarCos(time) * deskA.y) + (r * XMScalarSin(time) * deskB.y);
+	weldPos.z = (r * XMScalarCos(time) * deskA.z) + (r * XMScalarSin(time) * deskB.z);
 
 	XMVECTOR vec = XMLoadFloat3(&weldPos);
 	//vec=XMVector3Transform(vec, temp);
@@ -377,7 +384,10 @@ void RoomDemo::DrawScene()
 	for (auto& wallMtx : m_wallsMtx)
 		DrawMesh(m_wall, wallMtx);
 
+	SetShaders(m_phongVS, m_phongRectPS);
 	DrawMesh(m_desk, m_deskMtx);
+
+	SetShaders(m_phongVS, m_phongPS);
 	DrawMesh(m_weld, m_weldMtx);
 	DrawPuma();
 	

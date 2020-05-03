@@ -85,7 +85,7 @@ bool DxApplication::HandleCameraInput(double dt)
 		XMFLOAT3 newUpFloat;
 		
 		auto newUp = XMVector3TransformNormal(up, XMMatrixRotationX(m_camera.getXAngle()) * XMMatrixRotationY(m_camera.getYAngle())); // *(d.y * ZOOM_SPEED);
-		newUp = newUp * (d.y * ZOOM_SPEED);
+		newUp = newUp * (d.y * -ZOOM_SPEED);
 		m_camera.MoveTarget(newUp);
 
 		XMFLOAT3 newRightFloat;

@@ -48,7 +48,7 @@ namespace mini::gk2
 		//angles for all parts of puma
 		float a[6];
 		DirectX::XMFLOAT4 A[6];
-		DirectX::XMFLOAT3 weldPos;
+		DirectX::XMFLOAT3 weldPos; //bezwzgledna pozycja iglicy(ukl globalny)
 		DirectX::XMFLOAT3 deskNormal;
 		DirectX::XMFLOAT3 deskA;
 		DirectX::XMFLOAT3 deskB;
@@ -72,7 +72,7 @@ namespace mini::gk2
 
 		dx_ptr<ID3D11VertexShader> m_phongVS, m_particleVS;
 		dx_ptr<ID3D11GeometryShader> m_particleGS;
-		dx_ptr<ID3D11PixelShader> m_phongPS, m_lightShadowPS, m_particlePS;
+		dx_ptr<ID3D11PixelShader> m_phongPS, m_lightShadowPS, m_particlePS, m_phongRectPS;
 
 		ParticleSystem m_particles;
 
