@@ -31,8 +31,9 @@ ParticleSystem::ParticleSystem(DirectX::XMFLOAT3 emmiterPosition)
 	: m_emitterPos(emmiterPosition), m_particlesToCreate(0.0f), m_random(random_device{}())
 { }
 
-vector<ParticleVertex> ParticleSystem::Update(float dt, DirectX::XMFLOAT4 cameraPosition)
+vector<ParticleVertex> ParticleSystem::Update(float dt, DirectX::XMFLOAT4 cameraPosition, DirectX::XMFLOAT3 emmiterPosition)
 {
+	this->m_emitterPos = emmiterPosition;
 	size_t removeCount = 0;
 	for (auto& p : m_particles)
 	{

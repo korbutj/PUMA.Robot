@@ -22,7 +22,7 @@ RoomDemo::RoomDemo(HINSTANCE appInstance)
 	m_opacityTexture(m_device.CreateShaderResourceView(L"resources/textures/smokecolors.png")),
 	m_lightMap(m_device.CreateShaderResourceView(L"resources/textures/light_cookie.png")),
 	//Particles
-	m_particles{ {-1.3f, -0.6f, -0.14f} }
+	m_particles{ {weldPos.x, weldPos.y, weldPos.z} }
 {
 	//Projection matrix
 	auto s = m_window.getClientSize();
@@ -78,8 +78,8 @@ RoomDemo::RoomDemo(HINSTANCE appInstance)
 	vector<VertexPositionNormal> vertices;
 	vector<unsigned short> indices;
 	m_wall = Mesh::Rectangle(m_device, 4.0f);
-	m_desk = Mesh::DoubleRect(m_device, 2.0f);
-	m_weld = Mesh::Rectangle(m_device, 0.1f);
+	m_desk = Mesh::Rectangle(m_device, 2.0f);
+	//m_weld = Mesh::Rectangle(m_device, 0.1f);
 	m_box = Mesh::ShadedBox(m_device);
 
 	m_puma[0] = Mesh::LoadMesh(m_device, L"resources/meshes/mesh1.mesh");
@@ -203,13 +203,12 @@ void RoomDemo::UpdateLamp(float dt)
 	time += dt;
 	auto swing = 0.3f * XMScalarSin(XM_2PI*time / 8);
 	auto rot = XM_2PI*time / 20;
-	auto lamp = XMMatrixTranslation(0.0f, -0.4f, 0.0f) * XMMatrixRotationX(swing) * XMMatrixRotationY(rot) *
-		XMMatrixTranslation(0.0f, 2.0f, 0.0f);
+	auto lamp = XMMatrixTranslation(0.0f, -0.4f, 0.0f) * XMMatrixTranslation(0.0f, 2.0f, 0.0f);
 
 	XMStoreFloat4x4(&m_lampMtx, lamp);
 
-	XMFLOAT4 lightPos{ 0.0f, -0.05f, 0.0f, 1.0f };
-	XMFLOAT4 lightTarget{ 0.0f, -10.0f, 0.0f, 1.0f };
+	XMFLOAT4 lightPos{ 0.0f, 3.0f, -10.0f, 1.0f };
+	XMFLOAT4 lightTarget{ 0.0f, -8.0f, 10.0f, 1.0f };
 	XMFLOAT4 upDir{ 1.0f, 0.0f, 0.0f, 0.0f };
 
 	XMFLOAT4X4 texMtx;
@@ -247,7 +246,7 @@ void RoomDemo::UpdateLamp(float dt)
 
 void mini::gk2::RoomDemo::UpdateParticles(float dt)
 {
-	auto verts = m_particles.Update(dt, m_camera.getCameraPosition());
+	auto verts = m_particles.Update(dt, m_camera.getCameraPosition(), weldPos);
 	UpdateBuffer(m_vbParticles, verts);
 }
 
@@ -354,6 +353,7 @@ void RoomDemo::DrawMesh(const Mesh& m, DirectX::XMFLOAT4X4 worldMtx)
 void RoomDemo::DrawParticles()
 {
 	//Set input layout, primitive topology, shaders, vertex buffer, and draw particles
+
 	SetTextures({ m_smokeTexture.get(), m_opacityTexture.get() });
 	m_device.context()->IASetInputLayout(m_particleLayout.get());
 	SetShaders(m_particleVS, m_particlePS);
@@ -402,9 +402,6 @@ void RoomDemo::DrawScene()
 void RoomDemo::Render()
 {
 	Base::Render();
-
-	
-
 	// TODO : 1.13 Copy light's view/inverted view and projection matrix to constant buffers
 	UpdateBuffer(m_cbViewMtx, m_lightViewMtx);
 	UpdateBuffer(m_cbProjMtx, m_lightProjMtx);

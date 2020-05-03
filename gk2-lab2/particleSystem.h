@@ -44,7 +44,7 @@ namespace mini
 
 			ParticleSystem& operator=(ParticleSystem&& other) = default;
 
-			std::vector<ParticleVertex> Update(float dt, DirectX::XMFLOAT4 cameraPosition);
+			std::vector<ParticleVertex> Update(float dt, DirectX::XMFLOAT4 cameraPosition, DirectX::XMFLOAT3 emmiterPosition);
 
 			size_t particlesCount() const { return m_particles.size(); }
 			static const int MAX_PARTICLES;		//maximal number of particles in the system
