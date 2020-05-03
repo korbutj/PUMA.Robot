@@ -69,7 +69,6 @@ bool DxApplication::HandleCameraInput(double dt)
 		return false;
 	auto d = mstate.getMousePositionChange();
 	auto currTarget = m_camera.getTarget();
-	auto currPos = m_camera.getCameraPosition();
 	if (mstate.isButtonDown(0)) //LEFT
 	{
 		m_camera.Rotate(d.y * ROTATION_SPEED, d.x * ROTATION_SPEED);
@@ -82,12 +81,17 @@ bool DxApplication::HandleCameraInput(double dt)
 	}
 	else if (mstate.isButtonDown(1)) //RIGHT
 	{
-		XMFLOAT3 tar{d.x * ZOOM_SPEED, d.y * ZOOM_SPEED, currTarget.z};
-		XMVECTOR target = XMLoadFloat3(&tar);
-		auto fwdDirection = m_camera.getForwardDir() * target;
-		XMStoreFloat3(&tar, fwdDirection);
-		m_camera.MoveTarget(tar);
+		auto up = XMVectorSet(0, 1, 0, 0);
+		XMFLOAT3 newUpFloat;
+		
+		auto newUp = XMVector3TransformNormal(up, XMMatrixRotationX(m_camera.getXAngle()) * XMMatrixRotationY(m_camera.getYAngle())); // *(d.y * ZOOM_SPEED);
+		newUp = newUp * (d.y * ZOOM_SPEED);
+		m_camera.MoveTarget(newUp);
 
+		XMFLOAT3 newRightFloat;
+		auto newRight = m_camera.getRightDir();
+		newRight = newRight * (d.x * ZOOM_SPEED);
+		m_camera.MoveTarget(newRight);
 	}
 	else
 		return false;

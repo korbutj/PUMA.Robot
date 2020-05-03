@@ -42,7 +42,6 @@ XMMATRIX OrbitCamera::getViewMatrix() const
 
 XMVECTOR FPSCamera::getForwardDir() const
 {
-
 	auto forward = XMVectorSet(0, 0, 1, 0);
 	return XMVector3TransformNormal(forward, XMMatrixRotationX(getXAngle()) * XMMatrixRotationY(getYAngle()));
 }
@@ -50,7 +49,7 @@ XMVECTOR FPSCamera::getForwardDir() const
 XMVECTOR FPSCamera::getRightDir() const
 {
 	auto right = XMVectorSet(1, 0, 0, 0);
-	return XMVector3TransformNormal(right, XMMatrixRotationY(getYAngle()));
+	return XMVector3TransformNormal(right, XMMatrixRotationX(getXAngle()) * XMMatrixRotationY(getYAngle()));
 }
 
 void OrbitCamera::MoveTarget(FXMVECTOR v)
