@@ -10,7 +10,7 @@ DxApplication::DxApplication(HINSTANCE hInstance, int wndWidth, int wndHeight, s
 	m_device(m_window), m_inputDevice(hInstance),
 	m_mouse(m_inputDevice.CreateMouseDevice(m_window.getHandle())),
 	m_keyboard(m_inputDevice.CreateKeyboardDevice(m_window.getHandle())),
-	m_camera(XMFLOAT3(0, 0, 0)), m_viewport{ m_window.getClientSize() }
+	m_camera(XMFLOAT3(0, 0, 4.5f)), m_viewport{ m_window.getClientSize() }
 {
 	ID3D11Texture2D *temp = nullptr;
 	auto hr = m_device.swapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&temp));
