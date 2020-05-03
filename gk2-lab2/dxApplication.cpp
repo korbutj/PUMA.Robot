@@ -10,7 +10,7 @@ DxApplication::DxApplication(HINSTANCE hInstance, int wndWidth, int wndHeight, s
 	m_device(m_window), m_inputDevice(hInstance),
 	m_mouse(m_inputDevice.CreateMouseDevice(m_window.getHandle())),
 	m_keyboard(m_inputDevice.CreateKeyboardDevice(m_window.getHandle())),
-	m_camera(XMFLOAT3(0, 0, 0), 0.01f, 50.0f, 5), m_viewport{ m_window.getClientSize() }
+	m_camera(XMFLOAT3(0, 0, 0)), m_viewport{ m_window.getClientSize() }
 {
 	ID3D11Texture2D *temp = nullptr;
 	auto hr = m_device.swapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&temp));
@@ -68,10 +68,25 @@ bool DxApplication::HandleCameraInput(double dt)
 	if (!m_mouse.GetState(mstate))
 		return false;
 	auto d = mstate.getMousePositionChange();
+	auto currTarget = m_camera.getTarget();
+	auto currPos = m_camera.getCameraPosition();
 	if (mstate.isButtonDown(0))
+	{
 		m_camera.Rotate(d.y * ROTATION_SPEED, d.x * ROTATION_SPEED);
-	else if (mstate.isButtonDown(1))
+	}
+	else if (mstate.isButtonDown(2))
+	{
 		m_camera.Zoom(d.y * ZOOM_SPEED);
+	}
+	else if (mstate.isButtonDown(1))
+	{
+		XMFLOAT3 tar{d.x * ZOOM_SPEED, d.y * ZOOM_SPEED, currTarget.z};
+		XMVECTOR target = XMLoadFloat3(&tar);
+		auto fwdDirection = m_camera.getForwardDir() * target;
+		XMStoreFloat3(&tar, fwdDirection);
+		m_camera.MoveTarget(tar);
+
+	}
 	else
 		return false;
 	return true;

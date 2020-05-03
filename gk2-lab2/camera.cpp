@@ -19,21 +19,25 @@ void OrbitCamera::SetDistanceRange(float minDistance, float maxDistance)
 		maxDistance = minDistance;
 	m_minDistance = minDistance;
 	m_maxDistance = maxDistance;
-	ClampDistance();
+
 }
 
 void OrbitCamera::ClampDistance()
 {
-	if (m_distance < m_minDistance)
+	auto currTarget = this->getTarget();
+	auto currPos = this->getCameraPosition();
+	auto diff = XMFLOAT4(currTarget.x-currPos.x, currTarget.y - currPos.y, currTarget.z - currPos.z, 0.0f);
+	XMVECTOR vector = XMLoadFloat4(&diff);
+	auto distance = XMVector3Length(vector);
+	XMStoreFloat4(&diff, distance);
+	if (diff.x < m_minDistance)
 		m_distance = m_minDistance;
-	else if (m_distance > m_maxDistance)
-		m_distance = m_maxDistance;
 }
 
 XMMATRIX OrbitCamera::getViewMatrix() const
 {
-	return XMMatrixTranslation(-m_target.x, -m_target.y, -m_target.z) * XMMatrixRotationY(-m_angleY) *
-		XMMatrixRotationX(-m_angleX) * XMMatrixTranslation(0, 0, m_distance);
+	return XMMatrixTranslation(m_target.x, m_target.y, m_distance) * XMMatrixRotationY(-m_angleY) *
+		XMMatrixRotationX(-m_angleX);
 }
 
 XMVECTOR FPSCamera::getForwardDir() const
