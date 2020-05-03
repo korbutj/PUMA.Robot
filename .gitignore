@@ -32,7 +32,4 @@
 *.app
 /.vs/gk2-lab2/v16
 /gk2-lab2/x64/Debug
-/x64/Debug/phongVS.cso
-*.cso
-/x64/Debug/gk2-lab2.pdb
-/x64/Debug/gk2-lab2.ilk
+/x64/Debug

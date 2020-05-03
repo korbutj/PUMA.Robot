@@ -79,6 +79,7 @@ RoomDemo::RoomDemo(HINSTANCE appInstance)
 	vector<unsigned short> indices;
 	m_wall = Mesh::Rectangle(m_device, 4.0f);
 	m_desk = Mesh::Rectangle(m_device, 2.0f);
+	m_weld = Mesh::Rectangle(m_device, 0.1f);
 	m_box = Mesh::ShadedBox(m_device);
 
 	m_puma[0] = Mesh::LoadMesh(m_device, L"resources/meshes/mesh1.mesh");
@@ -96,6 +97,9 @@ RoomDemo::RoomDemo(HINSTANCE appInstance)
 	A[2] = { -0.91f,0.27f,0.0f,0.0f };
 	A[3] = { 0.0f,0.27f,-0.26f ,0.0f };
 	A[4] = { -1.72f,0.27f,0.0f,0.0f };
+	//Init weld position
+	weldPos = { 0.0f, 0.0f, 0.0f };
+
 
 	m_vbParticles = m_device.CreateVertexBuffer<ParticleVertex>(ParticleSystem::MAX_PARTICLES);
 
@@ -107,11 +111,23 @@ RoomDemo::RoomDemo(HINSTANCE appInstance)
 		XMStoreFloat4x4(&m_wallsMtx[i], temp * XMMatrixRotationY(a)*scale);
 	XMStoreFloat4x4(&m_wallsMtx[4], temp * XMMatrixRotationX(XM_PIDIV2) * scale);
 	XMStoreFloat4x4(&m_wallsMtx[5], temp * XMMatrixRotationX(-XM_PIDIV2) * scale);
-	temp = XMMatrixTranslation(0.0f, 1.0f, 1.0f);
-	XMStoreFloat4x4(&m_deskMtx, temp * XMMatrixRotationY(-XM_PIDIV2) * XMMatrixRotationZ(XM_PI/6));
+
+	temp = XMMatrixTranslation(-1.5f, 0.0f, 0.0f);
+
+
+	XMStoreFloat4x4(&m_deskMtx, XMMatrixRotationX(XM_PI / 6)* XMMatrixRotationY(-XM_PIDIV2)* temp);
+	XMStoreFloat4x4(&m_weldMtx, XMMatrixRotationX(XM_PI / 6) * XMMatrixRotationY(-XM_PIDIV2) * temp);
 	XMStoreFloat4x4(&m_boxMtx, XMMatrixTranslation(-1.4f, -1.46f, -0.6f));
 	
+	XMStoreFloat3(&weldPos, XMVector3Transform(XMLoadFloat3(&weldPos), XMLoadFloat4x4(&m_weldMtx)));
 
+	
+	deskNormal = { 1,XM_PI / 6,0 };
+	deskA= { 0,0,1 };
+	deskB = { 1,(XM_PI / 6)+XM_PIDIV2,0 };
+	XMStoreFloat3(&deskNormal, XMVector3Normalize(XMLoadFloat3(&deskNormal)));
+	XMStoreFloat3(&deskA, XMVector3Normalize(XMLoadFloat3(&deskA)));
+	XMStoreFloat3(&deskB, XMVector3Normalize(XMLoadFloat3(&deskB)));
 	
 	
 
@@ -178,7 +194,7 @@ void RoomDemo::UpdateCameraCB(XMMATRIX viewMtx)
 void RoomDemo::UpdateLamp(float dt)
 {
 	static auto time = 0.0f;
-	//time += dt;
+	time += dt;
 	auto swing = 0.3f * XMScalarSin(XM_2PI*time / 8);
 	auto rot = XM_2PI*time / 20;
 	auto lamp = XMMatrixTranslation(0.0f, -0.4f, 0.0f) * XMMatrixRotationX(swing) * XMMatrixRotationY(rot) *
@@ -229,6 +245,28 @@ void mini::gk2::RoomDemo::UpdateParticles(float dt)
 	UpdateBuffer(m_vbParticles, verts);
 }
 
+void mini::gk2::RoomDemo::UpdateWeld(float dt)
+{
+	static auto time = 0.0f;
+	time += dt;
+	weldPos.x = -1.5+ 0.6f * XMScalarCos(time) * deskA.x+ 0.6f * XMScalarSin(time) * deskB.x;
+	weldPos.y = 0.6f * XMScalarCos(time) * deskA.y + 0.6f * XMScalarSin(time) * deskB.y;
+	weldPos.z = 0.6f * XMScalarCos(time) * deskA.z + 0.6f * XMScalarSin(time) * deskB.z;
+
+	XMVECTOR vec = XMLoadFloat3(&weldPos);
+	//vec=XMVector3Transform(vec, temp);
+	XMStoreFloat3(&weldPos, vec);
+
+	XMStoreFloat4x4(&m_weldMtx, XMMatrixTranslation(weldPos.x, weldPos.y, weldPos.z));
+
+}
+
+void mini::gk2::RoomDemo::UpdatePuma()
+{
+	inverse_kinematics(weldPos, deskNormal, a[0], a[1], a[2], a[3], a[4]);
+	UpdatePumaMatrices();
+}
+
 void mini::gk2::RoomDemo::UpdatePumaMatrices()
 {
 	XMMATRIX mat[5];
@@ -244,13 +282,42 @@ void mini::gk2::RoomDemo::UpdatePumaMatrices()
 	}	
 	
 }
+void mini::gk2::RoomDemo::inverse_kinematics(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 normal, float& a1, float& a2, float& a3, float& a4, float& a5)
+{
+	float l1 = .91f, l2 = .81f, l3 = .33f, dy = .27f, dz = .26f;
+	XMVECTOR temp = XMVector3Normalize(XMLoadFloat3(&normal));
+	XMFLOAT3 Normal;
+	XMStoreFloat3(&Normal, temp);
+	XMFLOAT3 pos1;
+	pos1.x = pos.x + Normal.x * l3;
+	pos1.y = pos.y + Normal.y * l3;
+	pos1.z = pos.z + Normal.z * l3;
+	float e = sqrtf(pos1.z * pos1.z + pos1.x * pos1.x - dz * dz);
+	a1 = atan2(pos1.z, -pos1.x) + atan2(dz, e);
+	XMFLOAT3 pos2(e, pos1.y - dy, .0f);
+	a3 = -acosf(min(1.0f, (pos2.x * pos2.x + pos2.y * pos2.y - l1 * l1 - l2 * l2) / (2.0f * l1 * l2)));
+	float k = l1 + l2 * cosf(a3), l = l2 * sinf(a3);
+	a2 = -atan2(pos2.y, sqrtf(pos2.x * pos2.x + pos2.z * pos2.z)) - atan2(l, k);
+
+	
+	XMVECTOR normal1=XMVector3Transform(temp, XMMatrixRotationY(-a1));
+	normal1 = XMVector3Transform(normal1, XMMatrixRotationZ(-(a2+a3)));
+	XMFLOAT3 res;
+	XMStoreFloat3(&res, normal1);
+	a5 = acosf(res.x);
+	a4 = atan2(res.z, res.y);
+}
+
+
 
 void RoomDemo::Update(const Clock& c)
 {
 	double dt = c.getFrameTime();
 	HandleCameraInput(dt);
-	//UpdateLamp(static_cast<float>(dt));
+	UpdateLamp(static_cast<float>(dt));
 	UpdateParticles(dt);
+	UpdateWeld(dt);
+	UpdatePuma();
 }
 
 void RoomDemo::SetWorldMtx(DirectX::XMFLOAT4X4 mtx)
@@ -311,7 +378,7 @@ void RoomDemo::DrawScene()
 		DrawMesh(m_wall, wallMtx);
 
 	DrawMesh(m_desk, m_deskMtx);
-
+	DrawMesh(m_weld, m_weldMtx);
 	DrawPuma();
 	
 
@@ -326,7 +393,7 @@ void RoomDemo::Render()
 {
 	Base::Render();
 
-	UpdatePumaMatrices();
+	
 
 	// TODO : 1.13 Copy light's view/inverted view and projection matrix to constant buffers
 	UpdateBuffer(m_cbViewMtx, m_lightViewMtx);

@@ -37,21 +37,24 @@ namespace mini::gk2
 		dx_ptr<ID3D11Buffer> m_cbMapMtx; //pixel shader constant buffer slot 2
 
 		Mesh m_wall; //uses m_wallsMtx[6]
-		Mesh m_sphere; //uses m_sphereMtx
 		
 		Mesh m_box; //uses m_boxMtx
 		Mesh m_lamp; //uses m_lampMtx
 		
 		Mesh m_puma[6];
 		Mesh m_desk;
+		Mesh m_weld;
+
 		//angles for all parts of puma
 		float a[6];
 		DirectX::XMFLOAT4 A[6];
-
-
+		DirectX::XMFLOAT3 weldPos;
+		DirectX::XMFLOAT3 deskNormal;
+		DirectX::XMFLOAT3 deskA;
+		DirectX::XMFLOAT3 deskB;
 		dx_ptr<ID3D11Buffer> m_vbParticles;
 
-		DirectX::XMFLOAT4X4 m_projMtx, m_wallsMtx[6], m_boxMtx, m_lampMtx, m_lightViewMtx[2], m_lightProjMtx, m_deskMtx;
+		DirectX::XMFLOAT4X4 m_projMtx, m_wallsMtx[6], m_boxMtx, m_lampMtx, m_lightViewMtx[2], m_lightProjMtx, m_deskMtx, m_weldMtx;
 		DirectX::XMFLOAT4X4 m_pumaMtx[6];
 
 		dx_ptr<ID3D11SamplerState> m_sampler;
@@ -78,6 +81,8 @@ namespace mini::gk2
 		void UpdateLamp(float dt);
 		void UpdateParticles(float dt);
 		void UpdatePumaMatrices();
+		void UpdateWeld(float dt);
+		void UpdatePuma();
 		void inverse_kinematics(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 normal, float& a1, float& a2, float& a3, float& a4, float& a5);
 
 		void DrawMesh(const Mesh& m, DirectX::XMFLOAT4X4 worldMtx);
