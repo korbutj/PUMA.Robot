@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{b8270168-e2cf-4878-b5a1-a3c5153ecbf6}</UniqueIdentifier>
+      <Extensions>hlsl</Extensions>
+    </Filter>
+    <Filter Include="Source Files\ultis">
+      <UniqueIdentifier>{c8433dcb-1947-44fc-a989-2c7f1f35f517}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{6b4bfc0d-0d6f-4e98-a4d1-f21328d3262d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\d3dx">
+      <UniqueIdentifier>{04470882-3583-4203-949b-f96d542152ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\d3dx">
+      <UniqueIdentifier>{df811c6c-cc8f-42c6-8c57-6cf54ec33071}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\win32">
+      <UniqueIdentifier>{556cc3ce-5408-4ee7-b78c-97cb73ce85e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\win32">
+      <UniqueIdentifier>{1a72b644-cef9-4b46-84a7-35e18439451a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dinput">
+      <UniqueIdentifier>{98b2c936-6d8e-4d45-9993-ae7e766c5144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\dinput">
+      <UniqueIdentifier>{dca2b2ae-edda-4f89-b2a4-d0046333c019}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dxApplication.cpp">
+      <Filter>Source Files\d3dx</Filter>
+    </ClCompile>
+    <ClCompile Include="dxDevice.cpp">
+      <Filter>Source Files\d3dx</Filter>
+    </ClCompile>
+    <ClCompile Include="window.cpp">
+      <Filter>Source Files\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="windowApplication.cpp">
+      <Filter>Source Files\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Source Files\d3dx</Filter>
+    </ClCompile>
+    <ClCompile Include="vertexTypes.cpp">
+      <Filter>Source Files\d3dx</Filter>
+    </ClCompile>
+    <ClCompile Include="dxStructures.cpp">
+      <Filter>Source Files\d3dx</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="diDeviceBase.cpp">
+      <Filter>Source Files\dinput</Filter>
+    </ClCompile>
+    <ClCompile Include="diInstance.cpp">
+      <Filter>Source Files\dinput</Filter>
+    </ClCompile>
+    <ClCompile Include="keyboard.cpp">
+      <Filter>Source Files\dinput</Filter>
+    </ClCompile>
+    <ClCompile Include="mouse.cpp">
+      <Filter>Source Files\dinput</Filter>
+    </ClCompile>
+    <ClCompile Include="exceptions.cpp">
+      <Filter>Source Files\ultis</Filter>
+    </ClCompile>
+    <ClCompile Include="roomDemo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>Source Files\d3dx</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTextureLoader.cpp">
+      <Filter>Source Files\d3dx</Filter>
+    </ClCompile>
+    <ClCompile Include="particleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dxApplication.h">
+      <Filter>Header Files\d3dx</Filter>
+    </ClInclude>
+    <ClInclude Include="dxDevice.h">
+      <Filter>Header Files\d3dx</Filter>
+    </ClInclude>
+    <ClInclude Include="window.h">
+      <Filter>Header Files\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="windowApplication.h">
+      <Filter>Header Files\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="ptr_vector.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="compressed_pair.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="dxptr.h">
+      <Filter>Header Files\d3dx</Filter>
+    </ClInclude>
+    <ClInclude Include="clock.h">
+      <Filter>Header Files\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Header Files\d3dx</Filter>
+    </ClInclude>
+    <ClInclude Include="vertexTypes.h">
+      <Filter>Header Files\d3dx</Filter>
+    </ClInclude>
+    <ClInclude Include="dxStructures.h">
+      <Filter>Header Files\d3dx</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="diDeviceBase.h">
+      <Filter>Header Files\dinput</Filter>
+    </ClInclude>
+    <ClInclude Include="diInstance.h">
+      <Filter>Header Files\dinput</Filter>
+    </ClInclude>
+    <ClInclude Include="diptr.h">
+      <Filter>Header Files\dinput</Filter>
+    </ClInclude>
+    <ClInclude Include="keyboard.h">
+      <Filter>Header Files\dinput</Filter>
+    </ClInclude>
+    <ClInclude Include="mouse.h">
+      <Filter>Header Files\dinput</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="roomDemo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WICTextureLoader.h">
+      <Filter>Header Files\d3dx</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>Header Files\d3dx</Filter>
+    </ClInclude>
+    <ClInclude Include="particleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="phongPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="phongVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="particleGS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="particlePS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="particleVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="lightAndShadowPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
