@@ -70,15 +70,17 @@ bool DxApplication::HandleCameraInput(double dt)
 	auto d = mstate.getMousePositionChange();
 	auto currTarget = m_camera.getTarget();
 	auto currPos = m_camera.getCameraPosition();
-	if (mstate.isButtonDown(0))
+	if (mstate.isButtonDown(0)) //LEFT
 	{
 		m_camera.Rotate(d.y * ROTATION_SPEED, d.x * ROTATION_SPEED);
 	}
-	else if (mstate.isButtonDown(2))
+	else if (mstate.isButtonDown(2)) //MIDDLE
 	{
-		m_camera.Zoom(d.y * ZOOM_SPEED);
+		auto fwd = m_camera.getForwardDir();
+		fwd = fwd * (d.y * ZOOM_SPEED);
+		m_camera.MoveTarget(fwd);
 	}
-	else if (mstate.isButtonDown(1))
+	else if (mstate.isButtonDown(1)) //RIGHT
 	{
 		XMFLOAT3 tar{d.x * ZOOM_SPEED, d.y * ZOOM_SPEED, currTarget.z};
 		XMVECTOR target = XMLoadFloat3(&tar);

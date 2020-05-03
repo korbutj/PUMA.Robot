@@ -31,13 +31,14 @@ namespace mini
 		float getYAngle() const { return m_angleY; }
 		float getDistance() const { return m_distance; }
 		DirectX::XMFLOAT4 getTarget() const	{ return m_target; }
-
+	protected:
+		DirectX::XMFLOAT4 m_target;
 	private:
 		void ClampDistance();
 
 		float m_angleX, m_angleY;
 		float m_distance, m_minDistance, m_maxDistance;
-		DirectX::XMFLOAT4 m_target;
+		
 	};
 
 	class FPSCamera : public OrbitCamera

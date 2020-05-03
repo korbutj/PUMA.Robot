@@ -36,14 +36,15 @@ void OrbitCamera::ClampDistance()
 
 XMMATRIX OrbitCamera::getViewMatrix() const
 {
-	return XMMatrixTranslation(m_target.x, m_target.y, m_distance) * XMMatrixRotationY(-m_angleY) *
+	return XMMatrixTranslation(m_target.x, m_target.y, m_target.z) * XMMatrixRotationY(-m_angleY) *
 		XMMatrixRotationX(-m_angleX);
 }
 
 XMVECTOR FPSCamera::getForwardDir() const
 {
+
 	auto forward = XMVectorSet(0, 0, 1, 0);
-	return XMVector3TransformNormal(forward, XMMatrixRotationY(getYAngle()));
+	return XMVector3TransformNormal(forward, XMMatrixRotationX(getXAngle()) * XMMatrixRotationY(getYAngle()));
 }
 
 XMVECTOR FPSCamera::getRightDir() const
@@ -62,7 +63,12 @@ void OrbitCamera::MoveTarget(FXMVECTOR v)
 void OrbitCamera::Rotate(float dx, float dy)
 {
 	m_angleX = XMScalarModAngle(m_angleX + dx);
+	if (m_angleX >= XM_PIDIV2)
+		m_angleX = XM_PIDIV2;
+	if (m_angleX <= -XM_PIDIV2)
+		m_angleX = -XM_PIDIV2;
 	m_angleY = XMScalarModAngle(m_angleY + dy);
+	
 }
 
 void OrbitCamera::Zoom(float dd)
